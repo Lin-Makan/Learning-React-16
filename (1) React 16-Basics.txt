@@ -1,0 +1,269 @@
+A Guide To Build Modern Web & Mobile Development
+-----------------------------------------------------------
+* Here, the goal is to gather a lasting architecture to handle everything we want to   build with React.
+* React can handle many typical performance issues experienced by web developers.
+* We'll also go over the declarative philosphy of React.
+* We'll also touch on what React programmers can expect to work with.
+* The goal is to understand the concepts of React and how it solves problems with UI   Development.
+* We'll also understand some of the main features in "React".
+
+Chapter 1 : To Cover:
+
+           What is React ?
+           What are the React Features ?
+           What is new in React ?
+
+What is React ?
+>> A JavaScript library for building 'User Interfaces'(UIs).
+>> It's not a mega-framework and it's not a full-stack solution for databases to WebSocket connects.
+>> "REACT" is just the "View Layer" in an application.
+>> Just like libraries like JQuery used to manipulate UI elements and the templates inserted into the page, React components change what the user sees. 
+>>     
+       |  Application Code |
+       |        |          |
+       |      Data         |
+       |        |          |
+       | React Component   |
+       |        |          |
+       |    Browser DOM    |
+
+* We have Applicaton Logic that generates some 'Data'.
+* We want to render this Data to the UI, so we pass it to a 'React Component',
+  which handles the job of getting the HTML into the page.
+
+>> React may seem like there is'nt alot to learn about but internally there is alot going on.
+>> With React we use small Api's to work with to quickly familiarise instead of using Large Frameworks where you mostly spend time understanding how it all works.
+
+  Diagram Of API's we think of when programming in "React" :
+
+               React Component              |
+             -------------------            |     React DOM
+                   Data             >>>>>>  |   -------------
+                   Lifecycle                |      render()
+                   Events                   |
+                   JSX                      |
+                                            |
+
+
+   React is divided into major API's :
+      
+         * The React Component API : These are parts of the page actually rendered by React DOM.
+   
+         * React DOM : This is the API that's used to perform the actual rendering on a web page.
+
+>> With React Component, this is what we have to think about :
+     * Data : This is data that comes from somewhere (component does'nt care where from), and is rendered by the component.
+     * Lifecycle : This consists of methods or Hooks that we implement to respond to the 'components' entering and exiting phases of the React rendering process as        they happen overtime, For example, one phase of the lifecycle is when the component is about to be rendered. 
+     * Events : These are the codes that we write to respond to 'user interactions'.
+     * JSX : This the syntax of 'React Components' used to described UI structures.
+
+>> React by nature is simple. We don't have to spend tons of time going through React details.
+>> Once the BASICS are picked up, we can spend time more on React Patterns to fit correctly with our declartive UI's.
+
+       "DECLARATIVE UI STRUCTURES" Declarative UI Structures :
+
+* In React, components mix markup in with their JavaScript in order to delcare UI Structures.
+* The syntax used by React components is called JSX (JavaScript XML) which is a component renders content by returning some JSX.
+* The JSX itself is usually HTML markup, mixed with custom tags for React components.
+* With JSX component, we don't have to perform little micro-operations to change the content of a component.
+
+* Some react developers prefer the .jsx extension instead of .js for their components.
+* Unlike with other applications, React does'nt require you to make imperative programming steps in UI Development.
+* This is why JSX is central to React Components.
+* Why ? The XML-style syntax makes it easy to describe what the UI (User Interface) should look like.
+* That is, what are the HTML elements that this component is going to render ?
+This is called "declarative programming" and is very well suited for UI Development.
+* Once you've declared your UI Structure, you need to specify how it changes overtime.
+
+        TIME AND DATE 
+* JSX is not like a static string, representing a chunk of rendered output.
+* React components rely on data being passed into them.
+* This data represnets the dynamic parts of the UI.
+      
+            Here's A Diagram :
+
+                  React Component
+             -------------------------
+                |        |   |         |
+                | <div/> |   |  <div/> |
+                |________|   |_________|
+                           |
+                           |
+                  React Component  
+            ---------------------------
+                   |        |
+                   | <div/> |
+                   |________|
+                           |
+                           |
+                  React Component
+              ---------------------------
+                  |       |   |      |
+                  | <div/>|   | <p/> | 
+                  |_______|   |______|
+* Re-rendering the same JSX content makes things much easier for developers.
+* The challenge is making sure that React can handle the performance demands of this approach.
+
+               PERFORMANCE MATTERS.
+ * We can declare the structure of the UI by using JSX (JavaScript XML).
+ * There is less error than using the imperative apporach to declaring UI in pieces
+ * The declarative approach does present a challenge in "performance".
+
+* Example, having a declarative UI structure is fine for the initial rendering, because there's nothing on the page yet.
+* So the "React renderer" can look at the structure declared in JSX and render it in the DOM browser.
+
+*>>> The Document Object Model (DOM) represents HTML in the browser after it has been rendered.
+*>>> The DOM API is how javascript is able to change content on the page.
+
+* Unlike The JSX component, other libraries like HandleBars will render a template to HTML markup as a string which will then be inserted into the browser DOM.
+* React is different, when data changes we will have to re-render the component.
+* Handlebars will just rebuild the the HTML String, just like the initial renderer.
+* To declare renders this way will become a whole mess.
+* We don't this in React, Components are declarative for the initial render.
+* It makes it possible to re-render declarative UI structures.
+
+* React has something called a "Virtual DOM", which is used to keep a representation of the real DOM elements in memory.
+* The "Virtual DOM" can executive the imperative steps necessary.
+* Here'The Diagram Of It :
+
+
+       JSX                      Virtual DOM
+--------------              -------------------       
+________________           |  
+      <div>                |  imperativeAction()
+________________  >>>>>>>>>|  
+      <p/>                 |  imperativeAction()
+________________           | 
+    <button/>              |  imperativeAction()
+_________________          |
+
+
+* In React, you'll see the words 'Diffing' and 'Patching'.
+* Diffing means comparing old content with new content to figure out what's changed.
+* Patching means executing the necessary DOM operations to render the new content.
+
+* Like any other Javascript library, React can meet run-to-completion constrains.
+* Example, if the React internals are busy diffing content and patching the DOM, the browser can't respond to user input.
+
+* The potential for "React" are endless like using React Native
+* The JSX synax translates to low-level operations that update our UI.
+* React translates our declarative UI components into whatever, as we don't care who our render target is.
+* The render target is the browser DOM with React but is not restricted to the render browser.
+* React can target more than just a browser :
+
+Component >>>>> React Web >>>>>> Browser
+Component >>>>> React Native >>>>>> Mobile Device
+Component >>>>> React Desktop >>>>>> Laptop
+Component >>>>> React Toast >>>>>>> React Bread
+
+* We have React Web, React Native and React Desktop.
+* To target something new, the same pattern applies :
+   * Implement components specific to the target.
+   * Implement a React renderer that can perform the platform-specific operations under the hood.
+   >>>> This is all abstraction in 'React'.
+
+        /////// React Features  /\\\\\\
+* The features of React 16 inclue the folowing :
+
+  >>> Revamped core architecture
+  >>> Lifecycle Methods
+  >>> Context API
+  >>> Rendering fragments
+  >>> Portals
+  >>> Rendering lists and strings
+  >>> Handling errors
+  >>> Server-side rendering
+
+         ////// Revamped Core Architecture \\\\\\\\
+* Instead of rendering every component on the page in a run-to-compilation way, React renders fibers---smaller chunks of the page that can be prioritized and rendered aynchronoulsy.
+
+       /////// Lifecycle Methods \\\\\\\\
+* React 16 had to revamp some lifecycle methods available to class components.
+* Some lifecycle methods will be deprecated and eventually removed because they will be problematic for future async rendering funtionality in React.
+* A common way to initialize state in a react component is to use the "componentWillMount()" lifecycle method.
+* Once this method is removed from React, you can just set the initial state directly as an instance value.
+
+   ////// Context API \\\\\\\
+* Context is an alternative approach to passing data from one component to the next.  
+* The componets in the middle of the tree/ properties act as intermediaries for passing of these data.
+* It will become a problem if your application has alot of properties.
+
+  //////// Rendering Fragments \\\\\\\\
+* If your React component renders several sibling elements, say three <p> elements, for instance, you would have to wrap them up in a <div> because ""React would only components to return a single element.
+* The problem with this approach, is that it leads to alot of unnecessary DOM structure.
+* Wrapping your elements with <Fragment> is the same as wrapping them <div>, except there won't be any superflous DOM elements.
+
+   /////// Portals \\\\\\\\\
+* When a React component returns content, it gets rendered into its parent component.
+* Then that parent's content gets rendered into it's parent component and so on, all the way to the tree root.
+* Using a Portal, you can control precisely where your components content is rendered.
+  
+  //////// Rendering Lists And Strings \\\\\\\\\\
+* Before React 16, Components had to return either an HTML element or another React component as its content. This can restrict you as you had to wrap strings in HTML.
+* Now you can just return the string.
+* Similarly you can just return a list of strings or a list of elements.
+
+   /////// Handling Errors \\\\\\\\\
+* Error handling in React can be difficult if a component handles a JavaScript exception and sets an error 'state'.
+* To reset this 'state' you have to implement 'error boundaries'.
+* Error boundaries are created by implementing the "componentDidCatch ()" lifecycle method in a component. 
+* Having error boundaries like this in place, will allow you to structure your components in a way that suites your application. 
+
+
+  ///// Server-side Rendering \\\\\\\\
+* Server-side rendering (SSR) in react can be difficult.
+* You're rendering on the server, then rendering on the client too ?
+* The focus will be on using Next.js for SSR since its easier than the manual setup.
+* Next.js is a simple framework for building React applications that handles details such as "SSR" and "routing".
+
+
+    ////// What's New In React \\\\\\
+*>>>>> Memoizing Functional Components.
+*>>>>> Code splitting and Loading
+*>>>>> Hooks
+
+     // Memoizing Functional Components \\
+   * The "React.memo ()" function is the modern equivalent of the 'pure component class'.
+   * Memoized components  avoid re-rendering if the component data has'nt changed.
+   * In the past, you would extend your class component with 'PureComponent'.
+* The problem with this that there can be alot of React Applications with alot of functions.
+* To memoize componenets, we use "React.memo ()".
+* Now you can pass your functional components to "React.memo ()" and they'll behave like 'PureComponenet'.
+
+       // Code Splitting and Loading \\
+  * Prior to the "React.Lazy ()" function, code splitting in large Applications was cumbersome.
+  * Codesplitting reduces the size of the code bundles of large applications then sent to the browser, which will improve user expereince. Good for efficiency.
+  * By combining "React.Lazy ()" and the "Suspense" component, we get fine-grained control over how our  App is split.
+
+      // Hooks \\
+   * This feature are functions that extend the behaviour of functional React componenets.
+   * "Hooks" are used to 'hook into' the React component machinery from your React componenets instead on relying on "classes" to build components.
+ * You can use then React Hooks API to pass functions to handle these cases.
+ * This will provide more flexibiblty.
+
+           // Summary \\
+  * All and above, you were introduced to React at a highlevel.
+  * React is a library, with a small API, used to build UIs.
+  * Next, you were introduced to some of the key concepts of React.
+  * React is simple, as it does'nt have alot of moving parts.
+  * Next, we looked at the declarative nature of React components and JSX.
+  * Next, we discoverd that React takes performances seriously and that this is how we're able to write declarative code that can be re-rendered over and over.
+  * 
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
