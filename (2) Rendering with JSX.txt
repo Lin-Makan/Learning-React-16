@@ -1,0 +1,678 @@
+Rendering With JSX
+---------------------------------------------------------------
+
+* We'll be introduced to JSX.
+* JSX is the XML/HTML markup syntax that's embedded in your JavaScript code and used to declare your React components.
+* At the lowest level, HTML is used to create and describe pieces of UI.
+* Building React applications involves organizing these pieces of HTML markup into "components".
+* When you create a component, you add new vocabulary to JSX beyond basic HTML markup.
+* React let's you have your own JSX tags that can use JavaScript expressions to bring   your components to life.
+* JSX is the language used to describe UIs built using React.
+
+ We WILL Cover :
+       * Your first JSX content
+       * Rendering HTML
+       * Describing UI Structures
+       * Creating your own JSX elements
+       * Using JavaScript expressions
+       * Fragments of JSX
+
+>>> Your first JSX content :
+    
+    Hello JSX :
+    
+    import React from 'react';
+    import { render } from 'react-dom';
+
+    render (
+      <p>
+      Hello, <strong>JSX</strong>
+      </p>, 
+      document.getElementById( 'root' )
+    );
+
+* First, we need to import the relevant pieces.
+* The "render ()" function takes JSX as the first argument and renders it to the DOM node passed as the second argument.
+
+* The actual JSX content in this example 'renders' a paragragh with some bold text inside.
+* We could have just rendered this in the DOM directly as a plain string.
+* However, the aim of this example is to show the basic steps involved in getting JSX rendered onto the page.
+
+! JSX is transpiled into JavaScript statements; browsers have no idea what JSX is.
+
+     // Declarative UI Structures : 
+ 
+* Declarative is structured and in imperative order.
+* It's much easier to get things right with a structure than to perform steps in a specific order.
+
+* The example above shoiuld give you a feel of what declarative React is all about.
+* As we move further ahead, the JSX will be more elaborate, However, it's always going to describe what is in the UI.
+
+* The "render ()" function tells React to take your JSX markup and transform it into JavaScript statements that update the UI in the most efficient way possible.
+* This how React enables you to declare the structure of your UI without going through the steps that might in the end cause 'bugs'.
+* React supports the standard HTML tags that you would find in any HTML page.
+* Unlike static HTML, React has its own conventions to be followed when using HTML tags.
+ 
+      // Rendering HTML \\
+* End of the day, the job of a React component is to render HTML into the DOM browser.
+* This is why JSX has support for HTML tags out of the box.
+* We'll see how we render some code that renders a few of the available HTML tags.
+* We will then see some of these conventins used in React projects when HTML tags are used.
+
+       // Built-in HTML Tags \\ 
+* When we render JSX, element tags reference REACT components.
+* It would be tedious, so we have to create components for HTML elements, React comes with HTML components.
+* We can render any HTML tags in our JSX,
+* Lets try to render some of these tags :
+
+______________________________________________________________
+
+   import React from 'react';
+   import { render } from 'react-dom';
+
+   render(
+      <div>
+        <button />
+        <code />
+        <input />
+        <label />
+        <p />
+        <pre />
+        <select />
+        <table />
+        <ul />
+      <div />,
+      document.getElementById('root')
+   );
+____________________________________________________________________
+
+* Don't think of too much of the format of the rendered output.
+* We making sure that we can render arbitrary HTML tags, and they render as expected, without any "special definitions" and "imports".
+
+* The surrounding "<div>" tags groups together all of the other tags as its children.
+* WHY ? you might ask, that's because REACT needs a root component to render.
+* Later we will know how to render adjacent elements without wrapping them in a parent element.
+
+* HTML elements rendered using JSX closeley follow regular HTML element syntax with subtle differences in regards to case sensitivity and attributes.
+
+
+           // HTML Tag Conventions \\
+* When you render HTML tags in JSX markup, the expectation is that you'll use lowercase for the tag name.
+* In fact, capitalizing the name of an HTML tag will fail.
+* "Tag names" are "case-sensitive" and "non-HTML elements" are "capitalized".
+* This way its easy to scan the mark-up and spot the built-in HTML elements versus everything else.
+
+* You can also pass HTML elements any of their standard properties.
+* When you pass them something unexpected, a warning about the unknown property is logged. 
+ * Here's an EXAMPLE :
+ _____________________________________________________________________________
+      
+       import React from 'react';
+       import { render } from 'react-dom';
+       
+       render(
+         <button title="My Button" foo="bar">
+           My Button
+         </button>,
+         document.getElementById('root')
+      );
+    
+      render(<Button />, document.getElementById('root'));
+____________________________________________________________________________________
+
+*>>> Whennyou run this example it will fail to compile bacause React does'nt know about the <Button> element; it only knows <button>.
+* Later on we'll cover property validation for the components that you make.
+* This avoids silent misbehaviour seen with "foo" property in the above example.
+
+* You may use any HTML tags as JSX tags, as long as you remember that they're case-sensitive and pass the correct attrribute names.
+* Aside from attribute values, you can use HTML tags to describe the structure of your page content.
+
+          // Describing UI Structures \\
+* JSX is capable of describing screen elements in a way that ties them together to form a complete UI Structure.
+* Now, lets look at some JSX mark-up that declares a more elaborate structure than a single paragraph :
+
+_______________________________________________________________________________________
+
+       import React from 'react';
+       import { render } from 'react-dom';
+
+       render(
+          <section>
+             <header>
+                <h1>A Header</h1>
+             </header>
+             <nav>
+                <a href="item">Nav Item</a>
+             </nav>
+             <main>
+                 <p>The main content...</p>
+             </main>
+             <footer>
+                <small>&copy; 2022</small>
+             </footer>
+          </section>,
+          document.getElementById('root')
+      );
+________________________________________________________________________________
+
+* This JSX markup describes some fairly sophisticated UI structure.
+* Yes, it's easier to read than imperative code because it's XML, and XML is good at expressing hierarchical structure.
+* This is how we want to think of our UI when it needs to change, not as an indivdual element or property.
+
+*>>> Heres how the 'rendered' content looks like :
+                                                 
+                                                    ---------------------------
+                                                    | A HEADER                |
+                                                    |                         |
+                                                    | Nav Item                |
+                                                    |                         |
+                                                    | The main content...     |
+                                                    |                         |
+                                                    | (c) 2022                |
+                                                    ---------------------------
+
+* There alot of semantic elements in this mark-up describing the structure of the UI.
+* The <header> element describes the top part of the page where the title is,
+* The <main> element describes where the main page content goes.
+* This complex structure makes it clearer for developers to understand.
+
+* Before we start implementing dynamic JSX markup, let's create some of our own JSX components.
+
+          // >>> Creating Your Own JSX Elements <<< \\
+* Components are the fundamental building blocks of REACT, components are the vocabularly of JSX markup.
+* We will build examples that "nest custom JSX elements" and learn how to namespace your components.
+* Here, we will see how to 'encapsulate' HTML markup within a "component".
+
+                || Encapsulating HTML ||
+* We create new JSX elements so that we can 'encapsulate' larger structures.
+* This means that instead of typing out complex markup, you can use your custom tag.
+* The React component returns the JSX that goes where the tag is used. 
+* For EXAMPLE :
+__________________________________________________________________________________
+
+        import React, { Component } from 'react';
+        import { render } from 'react-dom'; 
+        
+        class MyComponent extends Component {
+        
+        render () {
+           return (
+              <section>
+                  <h1>My Component</h1>
+                  <p>Content in my component...</p>
+              </section>
+           );
+        }
+
+    render(<MyComponent />, document.getElementById('root'));
+_________________________________________________________________________________
+
+* Here's what that rendered output looks like :
+
+                                               -----------------------------  
+                                               |MY COMPONENT               |
+                                               |                           |
+                                               |Content in my component... |
+                                               |                           |
+                                               -----------------------------
+ * This is the first React component that we've implemented, lets dissect this :
+
+*>>> We created a 'class' called "MyComponent". which extends the 'Component' class from React.
+*>>> This is how we create a new JSX element.
+*>>> As you can see inn the call to 'render ()', you're rendering a <MyComponent> element.
+
+*>>> The HTML that this 'component' encapsulates is returned by the "render ()" method.
+*>>> In this case, when then JSX <MyComponent> is rendered by 'react-dom', it's replaced by a <section> element, and everything in it.
+
+
+* When React renders JSX, any custom elements that you use must have their corresponding React component within the same scope.
+* In the preceeding example, the "MyComponent" class was declared in the same scope as the call to 'render ()', so everything worked as expected.
+* Usually you'll import components , adding them to the appropriate scope.
+
+* HTML elements such as <div> often take nested child elements.
+* Let's see if we do the same with JSX elements, which we create by implementing components.
+
+      // Nested Elements \\ 
+* Using JSX markup is useful for describing UI structures that have 'parent-child' relationships.
+* Child elements are created by nesting them within another component : "the parent" .
+* For example , a "<li> tag" is only useful as the child of a "<ul> tag" or a "<ol> tag".
+* You'll probably going to make similar nested structures with your own React components.
+* For this, you need to use the 'children' property.
+* Let's see how this works :
+
+*>>>Here's the JSX markup :
+_____________________________________________________________________
+
+      import React from 'react';
+      import { render } from 'react-dom';
+
+      import MySection from './MySection';
+      import MyButton from './MyButton';
+
+      render(
+          <MySection>
+               <MyButton>My Button Text</MyButton>
+          </MySection>,
+          document.getElementById('root')
+     );
+_____________________________________________________________________ 
+
+* You're importing two of your own React components : "MySection" and "MyButton".
+* Now, if you look at the JSX markup, you'll notice that <MyButton> is a child of <MySection>.
+* You'll also notice that the MyButton component accepts text as it's child, instead of more JSX elements.
+
+*>>> Let's see how these components work, starting with "MySection" :
+
+______________________________________________________________________
+    
+         import React, { component } from 'react';
+
+         export default class MySection extends Component {
+            render () {
+               return (
+                  <section>
+                     <h2>My Section</h2>
+                     {this.props.children}
+                  </section>
+               );
+            }
+        }
+______________________________________________________________________________
+
+* This component renders a standard <section> HTML element, a heading, and then {this.props.children}.
+* It's this last piece that allows components to access nested elements or text, and to render them.
+
+* The two braces used in the preceding example are used for JavaScript xpressions.
+* We'll soon cover the JavaScript expression syntax foundin JSX markup.
+
+>>> Now, it's look at the "MyButton" component :
+_______________________________________________________________________
+
+              import React, { Component } from 'react';
+
+              export default class MyButton extends Component {
+                 render() {
+                    return <button>{this.props.children}</button>;
+                 }
+              }
+
+___________________________________________________________________________
+
+* This component uses the exact same pattern as 'MySection'; take the {this.props.children} value and surround it with markup.
+* React handles the details for you.
+* In this example, the button text is transparently passed through 'MySection'.
+* In other words. we did'nt have to write any code in MySection to make sure that MyButton got it's text. 
+* Here's what the rendered output looks : 
+                                             --------------------
+                                            |   MY SECTION       |
+                                            |   ______________   |
+                                            |   My Button Text   |
+                                            |   ---------------  |
+                                            ---------------------
+
+* We can further organize our components by placing them within a namespace.
+
+            // Namespaced Components \\
+
+* The custom elements that you've created so far have used simple terms.
+* A namespace provides an organizational unit for your components so that related components can share the same namespace prefix.
+* Instead of writing <MyComponent> in your JSX markup, you would write <MyNamespace.MyComponent>.
+* This makes it clear that MyComponent is part of MyNamespace.
+* 
+
+ * Typically, MyNamespace would also be a 'component'.
+ * The idea of namespacing is to have a namespace component render its child components using the namespace syntax.
+ * EXAMPLE :
+______________________________________________________
+    
+          import React from 'react';
+          import { render } from 'react-dom';
+
+          import MyComponent from ' ./MyComponent';
+
+          render(
+              <MyComponent>
+                 <MyComponent.First />
+                 <MyComponent.Second />
+              </MyComponent>,
+              document.getElementById('root')
+          );
+
+__________________________________________________________
+
+* This markup renders a <MyComponent> element with two children.
+* Instead of writing <First>, we write<MyComponent.First>, and the same with <MyComponent.Second>.
+* We want to explicitly show that 'First' and 'Second' belong to 'MyComponent' within the markup.
+
+* You can use 'namespace component' and you can also import one component and expressivley mark the relationship within the markup.
+* There is no correct way to do it, it goes by your preference.
+
+* Now, let's look at the 'MyComponent' module :
+_____________________________________________________________
+
+            import React, { Component } from 'react';
+            
+            class First extends Component {
+               render () {
+                 return <p>First...</p>;
+               }
+            }
+
+            class Second extends Component {
+               render () {
+                 return <p>Second...</p>;
+               }
+            }
+        
+            class MyComponent extends Component {
+               render () {
+                 return <section>{this.props.children}</section>;
+               }
+            }
+
+            MyComponent.First = First; 
+            MyComponent.Second = Second;
+       
+            export default MyComponent;
+     
+            export { First, Second };
+_________________________________________________________________________
+
+* This module declares 'MyComponent' as well as other componenets that fall under this namespace (First and Second).
+* It assigns the components to the namespace component (MyComponent) as class properties.
+* Also, you don't have to directly export 'First' and 'Second' since they're accessible through the "MyComponent".
+* You alsodon't have have to define everything in the same module,you can just import 'second' and 'First' and assign them as class properties.
+* Whatever you use, make sure you use consistently.
+
+* You can build your own REACT components to introduce new JSX tags in your markup.
+* You can control HTML content a given component renders and aslo provide components with a namespace.
+
+*>>>> JavaScript  expressions are the dynamic pieces of JSX and are what cause React to update components.
+
+           ////>>>>> Using JavaScript Expressions <<<<<\\
+
+* JSX has a special syntax that allows you to embed JavaScript expressions.
+* When React renders JSX content, expressions in the markup are evaluated.
+* This is the dynamic aspect of JSX.
+* Here you\ll learn how to use expressions to set property values and element text content.
+* You'll also learn how to map collections of data to JSX eleemnts.
+           
+                // Dynamic Property Values And Text \\
+
+* Some HTML propert or text values are static, meaning they don't chang as JSX markup is rendered.
+* Other values, the values of properties or text, are based on Data that is found somewhere else in the application.
+* Remember that RAECT is just a 'view layer'.
+
+      >>What JavaScript Expression Syntax Look Like in JSX Markup<< :
+__________________________________________________________________________
+
+        import React from 'react';
+        import { render } from 'react-dom';
+
+        const enabled = false;
+        const text = 'A Button';
+        const placeholder = 'input value...';
+        const size = 60;
+
+        render (
+           <section>
+              <button disabled={enabled}>{text}</button>
+              <input placeholder={placeholder} size={size} />
+           </section>,
+           document.getElementByID('root')
+        );
+__________________________________________________________________________
+
+* Anything that is valid JavaScript expression, including nested JSX, can go in between the braces : {}.
+* For properties and text, this is often a variable name or object property.
+* Notice in this example, that the !enabled expression computes a Boolean value.
+* Here is the rendered Output :
+                                 _________________________________
+                                |  A Button   [input value..... ] | 
+                                |_________________________________|
+
+>> Try playing with these values and see what the rendered HTML output looks like.
+>> Primitive JavaScript values are straightforward to use in JSX synatx.
+>> BUT, what if you have an 'object' or 'array' that you need to transform into JSX elements ?
+
+       /// Mapping Collections To Elements \\
+ * There are times when you need to write JavaAscripts expressions that change the structure of your markup.
+* Previously, we learned how to use JavaScript expression syntax to dynamically change the property values of JSX elements.
+* What about when you need to 'add' or 'remove' elements based on JavaScript collections ?
+  ! i.e : When referring to "JavaScript collection", I'm referring to both plain 'objects' and 'arrays', Or anything iterable.
+
+* The best method to dynamically control JSX elements is to map them from a collection.
+___________________________________________________________________
+   
+        import React from 'react';
+        import { render } from 'react-dom';
+
+        const array = ['First', 'Second', 'Third'];
+
+        const object = {
+           first: 1,
+           second: 2,
+           third: 3
+        };
+
+        render(
+          <section>
+             <h1>Array</h1>
+             <ul>
+               {array.map(i => (
+                  <li key={i}>{i}</li> 
+               ))}
+             </ul>
+
+             <h1>Object</h1>
+             <ul>
+               {Object.keys(object).map (i => (
+                  <li key={i}>
+                     <strong>{i}: </strong>
+                     {object[i]}
+                  </li>
+               ))}
+            </ul>
+         </section>,
+         document.getElementById('root')
+      );
+_____________________________________________________________________
+
+* The first collection is an array called "array", populated with string values.
+* Moving down to the JSX markup, you can see the call to "array.map()", which returns a new a new array.
+* The mapping function is actually returning a JSX element (<li>), meaning that each item in the array is now represented in the 'markup'.
+
+*>>> The result of evaluating this expression is an array.
+*>>> No need to panic, JSX knows how to render arrays of elements.
+
+* The 'object collection' uses the same technique, expect you have to call "object.keys()" and then map this array.
+* What's nice about mapping collections to JSX elements on the page is that you can 'control the structure of React components based on the collected data'.
+* This means that you don't have to rely on "imperative logic" to control the UI.
+
+    Here's the rendered Output :
+                                  __________________
+                                 |  ARRAY          | 
+                                 |                 |
+                                 |    * First      |
+                                 |    * Second     |
+                                 |    * Third      |
+                                 |                 |
+                                 |  OBJECT         |
+                                 |                 |
+                                 |    * first: 1   |
+                                 |    * second: 2  |
+                                 |    * third: 3   |
+                                 |_________________|
+
+* JavaScript expressions bring JSX content to life.
+* React evaluates expressions and updates the HTML content based on what has already been rendered and changed.
+* Its important to know how to utilize these expressions because they're one of the most comon day-to-day activities of any React developer.
+
+*>>>> Now it's time to learn how to group together JSX markup without relying on HTML tags to do so :
+
+     \\FRAGMENTS OF JSX// Fragments Of JSX
+
+* >> React 16 introduces the concept of fragments.
+* >> Fragments is a way to group together chunks of markup without having to add unnecessary structure to your page.
+* >> For example, a common approach is to have a React component return content wrapped in a <div> element.
+* >> This element serves no real purpose and adds clutter to the DOM.
+
+* >> Let's look at an example.
+* >> Here are two versions of a component.
+* >> One uses a wrapper element and one uses the new fragment feature : 
+_______________________________________________________________________
+
+           import React from 'react';
+           import { render } from 'react-dom';
+
+           import WithoutFragments from './WithoutFragments';
+           import WithFragments from './WithFragments';
+
+           render(
+              <div>
+                <WithoutFragments />
+                <WithFragments />
+              </div>,
+              document.getElementById('root')
+           );
+_________________________________________________________________
+
+* The two elements rendered are <WithoutFragments> and <WithFragments>.
+* Here's what they look like when renderd :
+                                             ______________________________________
+                                            |                                      |
+                                            |  WITHOUT FRAGMENTS                   |
+                                            |                                      |
+                                            |  Adds an extra div element           |
+                                            |                                      |
+                                            |  WITH FRAGMENTS                      |
+                                            |                                      |
+                                            | Doesn't have any unused DOM elements.|
+                                            |______________________________________|
+
+* Let's compare the two approaches :
+
+  
+         /// Using Wrapper Elements \\\ USING WRAPPER ELEMENTS ///
+
+* The first approach is nto wrap sibling elements in <div>. Here's what the source looks like :
+_______________________________________________________________________
+        import React { component } from 'react';
+
+        class WithoutFragments extends Component {
+          render () {
+            return (
+               <div>
+                 <h1>Without Fragments</h1>
+                 <p>
+                   Adds an extra <code>div</code> elements.
+                 </p>
+               </div>
+           );
+         }
+       }
+
+       export default WithoutFragments;
+__________________________________________________________________________
+
+* >>> The essence of this component is the <h1> and <p> tags.
+* >>> Yet, in order to return them from render (), you have to wrap them with <div>.
+* >>> Indeed, inspecting the DOM using your browser dev tools reveals that <div> does nothing but add another level of structure :
+                                               ________________________
+                                                 <div>
+                                                   <h1>Without Fragments</h1>
+                                                   <p>      
+                                                     "Adds an extra "
+                                                    <code>div</code>
+                                                     " element."
+                                                   </p>
+                                                 </div>
+                                                 -------------------------------
+* Now imagine an app with lots of these components___That's alot of pointless elements.
+* >>> Let's see how to use fragments to avoid unnecessary tags. :
+
+           // Using Fragments \\
+* >> Let's take a look at the withFragments' component, where we have avoided using unnecessary tags : 
+______________________________________________________________________
+ 
+                 import React, { Component, Fragment } from 'react';
+               
+                 class WithFragments extends Components {
+                   render () {
+                      return (
+                         <Fragment>
+                            <h1>With Fragments</h1> 
+                            <p>Doesn't have any unused DOM elements.</p>
+                         </Fragment>
+                      );
+                   }
+                }
+                
+                export default WithFragments;
+__________________________________________________________________________
+
+* Instead of wrapping the component content in <div>, the<Fragment> element is used.
+* This is a special type of element that indicates that only its children need to rendered.
+* You can see the difference compared  to the WithoutFragments component if you inspect the DOM :
+               <h1>With Fragments</h1>
+               <p>Doesn't have any unused DOM elements.</p>
+
+!````* Notice how you had to 'import' Fragment from React in the previous example?
+* This is because not all transpilers such as Babel understand the 'Fragment' element yet. 
+* In future vesions, there will actually be a shorthand way to express fragments in JSX: <>My Content</>. 
+* BUT, for now, React.Fragement should work with all React tooling.
+ Personally the <Fragment> syntax is easier to read.
+
+*//* With the advent of of fragments in JSX markup, we have less HTML rendered on the page because we don't have to use tags such as <div> for the sole purpose of grouping elements together.
+*//* Instead, when a component renders a fragment, React knows to render the event's child element wherever the component is used.  
+
+     || Summary ||
+
+* We learned about the basics of JSX, including its declarative structure, which leads to more maintable code.
+* Then you wrote some code to render some basic HTML and learned about describing complex structures using JSX; every React application has at least some structure.
+
+* Next, learned about extending the vocabularly of JSX markup by implementing your React Components,which is how you design your UI as a series of smaller pieces and glue them together to form the whole.
+* Next, you learned how to bring dynamic content into JSX element properties, and how to map JavaScript  collections to JSX elements, eliminating the need for imperative logic to control the UI display.
+* Last and not least, learned how to render fragments of JSX content using new React 16 functionality, which prevents unnecessary HTML elements from being used.
+
+* Now you know how it is to render UI's by embedding declarative XML in your JavaScript modules, lets move on to the next chapter.
+* We'll get into "Component Properties and State".
+                                              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                              
+
+
+
+
+
+
+
+
+
+
+
+
+
