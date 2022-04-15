@@ -1,0 +1,1005 @@
+ ///>>> COMPONENT PROPERTIES, STATE, AND CONTEXT<<<\\\ 
+------------------------------------------------------------------
+
+* React Components rely on JSX syntax, which is used to describe the structure of the UI.
+* JSX will only get you so far---You need data to fill in the structure of your React component.
+* The focus here is on "Component Data", which comes in two main Varieties: "Properties" and "State". 
+* Another option for passing data to components is via "Context".
+* We'll start off with what is meant by properties and state.
+* Then we'll show how to "set component state" and "pass component properties".
+* Towards the end we'll build your knowledge of properties and state and introduce
+  'functional components' and the container pattern.
+* Then learn about the "context" and when it makes a better choice than a
+  property for passing data to components.
+ 
+   *>>>> Topics To Discuss :
+           * What is component state?
+           * What are component properties?
+           * Setting a component state.
+           * Passing property values.
+           * Stateless Component.
+           * Container Components.
+           * Providing and Consuming context. 
+-------------------------------------------------------------------
+            // What is component state? \\
+* React components declare the structure of the UI elements using JSX.
+* However, components need data if they are to be useful.
+* For example, your component JSX might declare <ul> that maps a 
+  JavaScript collection to <li> elements. Where does this collection come from ?
+
+* State is the dynamic part of a React component. You can declare 
+  the initial state of a component, which changes over time.
+
+* Imagine that you're rendering a component where a piece of it's state
+  is initialized to an empty array.
+* Later on, this array is populated with data using setState().
+* This is called a change in state, and whenever you tell a React component to 
+  change it's state, the component will automatically re-render itself, calling render ().
+* The process is visualized here :
+                                       ______________________________________________   
+                                      |
+                                      |           Component
+                                      |  _______________
+                                      | | Initial State |
+                                      | |_______________|
+                                      |         | 
+                                      |         |
+                                      |  _______|________           ______________
+                                      | |    State       |---------|  setState()  |
+                                      | |________________|         |______________|
+                                      |         |
+                                      |         |
+                                      | ________|________        
+                                      ||     render()    | 
+                                      ||_________________|
+                                      |________________________________________________
+
+* The 'state' of a component is something that either the component itself can set, or other
+  pieces of code, outside of the component.
+* Now we'll look at the component properties and explain how they differ from 'component state'.
+
+  // What Are Component Properties ?  
+
+* Properties are used to pass data into your React components.
+* Instead of calling a method with a new state as the argument, properties are passed
+  only when the component is rendered. That is you pass property values to JSX elements.
+
+** In JSX context,properties are called attributes, because that's why they're
+   called in XML parlance.
+** In this book, properties and attributes are synonymous with one another.
+
+* Properties are different than state because they don't change after
+  the initial render of the component.
+* If a property value has changed, and you want to re-render the component,
+  then we have to re-render the JSX that was used to render it in the first place.
+* The React internals take care of making sure this is done efficiently.
+* Heres the diagram of rendering and re-rendering a component using 'properties' :
+
+                                       _____________________________________  
+                                      |
+                                      |         
+                                      |  _______________
+                                      | | render()      |-------
+                                      | |_______________|       | 
+                                      |         |               |
+                                      |         |               |
+                                      |  _______|________       |
+                                      | |    JSX         |      |
+                                      | |________________|      |   
+                                      |         |               |
+                                      |         |               |
+                                      | ________|________       |  
+                                      ||     Props       |      |
+                                      ||_________________|      |
+                                      |         |               |
+                                      | ________|_______        |
+                                      ||  Component     |       |
+                                      ||________________|-------
+                                      |_________________________________________
+
+* This looks alot different than a stateful component.
+* Then real differece is that with properties, it's often a parent component
+  that decides when to render the JSX.
+* The component does'nt actually know how to to re-render itself.
+* This top-down flow is easier to predict than state that changes all over the place.
+
+* Let's make sense of 'state' and 'properties' by writing some code, starting with 
+  setting the "state of your components".
+
+             // Setting A Component State \\
+* 1.) Here we will write code that "sets the state of components".
+* 2.) First, we'll learn about the "initial state"---that is, the "default state of a component".
+* 3.) Next, learn about how to "change the state of a component", causing it to re-render itself.
+* 4.) Finally, you'll see how a "new state is merged" with an 'existing state'.
+
+           // Setting An Initial Component State \\
+* The 'initial state' of a component isn't required, but if 
+  your component uses state, it should be "set".
+* This is because if the component expects certain 'state properties' to be there and they're aren't,
+  then the component will either fail or render something unexpected.
+* Thankfully, its easy to "set the initial component state".
+
+* The intial state of a component should always be an object with one or more properties.
+* For example, you might have a component that uses a single array as its state.
+  This okay to do to, but make sure to set the initial array as a property of the 'state' object.
+  Don't use an array as the state.
+* The reason for this is simple : 'Consistency'.
+* Every React component uses a plain object as its its state.
+
+* Lets code now.
+* Here's a component that sets an 'intial state object' :
+__________________________________________________________________
+
+        import React, { Component } from 'react';
+        
+        export default class MyComponent extends Component {
+          state = { 
+            first: false,
+            second: true
+        };
+
+        render() {
+          const { first, second } = this.state;
+
+          return (
+            <main>
+              <section>
+                  <button disabled={first}>First</button>
+              </section>
+              <section>
+                  <button disabled={second}>Second</button>
+              </section>
+           </main>
+         );
+       }
+     }
+__________________________________________________________________________
+
+* If you look at the JSX that's returned by "render()", you can actually see the state values that this component depends on---"first" and "second".
+* Since you've set these 'properties' up in the 'initial state', you're safe to render the component and there won't be any suprises.
+* For example, you could render this component only once, and it would render as expected thanks to the initial state set in 'MyComponent' in the preceding code listing :
+_____________________________________________________________________________
+                    import React from 'react';
+                    import { render } from 'react-dom';
+                    import MyComponent from './MyComponent';
+
+                    render(<MyComponent />, document.getElementById('root'));
+_____________________________________________________________________________
+
+* Here's what the rendered output looks like :
+
+                                                __________________
+                                               |                  |
+                                               |      First       |
+                                               |    ----------    |
+                                               |      Second      | 
+                                               |__________________| 
+
+* Setting the initial state is not exciting but its got great importance.
+
+* Now, let us make the component re-render itself when the state is changed :
+
+                  /// Creating A Component State \\\
+
+* Lets create a component that has some initial state.
+* You'll then render this component and update its state.
+* This means that the component will be rendered twice.
+* Lets have a look at this component :
+__________________________________________________________________
+        
+             import React, { Component } from 'react';
+
+             export default class MyComponent extends Component {
+               state = {
+                 heading: 'React Awesomesauce (Busy)',
+                 content: 'Loading...'
+               };
+
+               render () {
+                 const { heading, content } = this.state;
+
+                 return (
+                    <main>
+                      <h1>{heading}</h1>
+                      <p>{content}</p>
+                   </main>
+                 );
+              }
+           }
+____________________________________________________________________________
+
+* The JSX of this component depends on two state values--"heading" and "content".
+* The component also sets the 'initial values' of these 'two' state values., which
+  means that it can be rendered without any unexpected "gotchas".
+* Now, let's look at some code that 'renders' the component and then 
+  're-renders' it by changing the "state" :
+_________________________________________________________________
+
+            import React from 'react';
+            import { render } from 'react-dom';
+
+            import MyComponent from './MyComponent';
+
+            const myComponent = render(<MyComponent />,
+            document.getElementById('root'));
+
+            setTimeout (() => {
+              myComponent.setState({
+                 heading: 'React Awesomesauce',
+                 content: 'Done!'
+              });
+            }, 3000);
+________________________________________________________________
+
+* The component is first rendered with its default 'state'.
+* However, the interesting spot in this code is the "setTimeout()" call.
+* After 3 seconds, it uses "setState()" to change the two state property values.
+* This change is reflected in the UI.
+
+* Here's what the initial state looks like when rendered :
+
+                                ____________________________ 
+                               |                            |
+                               |  REACT AWEsomesauce (BUSY) |
+                               |                            |
+                               |  Loading...                |
+                               |____________________________| 
+
+* >>> Here's what the 'rendered' output looks like after the "state change" :
+
+                                ____________________________ 
+                               |                            |
+                               |  REACT AWEsomesauce (BUSY) |
+                               |                            |
+                               |  Done!                     |
+                               |____________________________|
+
+* // This example highlights the power of having declarative JSX syntax to 
+     describe the structure of the UI component.
+* You declare it once and then update the state of the component overtime to reflect changes in 
+  the application as they happen.
+* All of the DOM interactions are optimized and hidden from the view.
+
+*/*/ In this example, you replaced the entire component state.
+*/*/ That is, the call to "setState()" passed in the same object properties
+     found in the initial state.
+* But what if you only want to update part of the component state ?
+
+           // Merging The Component State \\
+
+* When you set the state of a 'React' component, you're actually merging the
+  'state of the component' with the object that you pass to "setState()".
+* This is useful because it means that you can set part of the component state while 
+  the rest of state as it is.
+* Let's look at an example now.
+
+* First, lets implement a component that has some initial state set on it :
+_______________________________________________________________________
+
+              import React, { Component } from 'react';
+ 
+              export default class MyComponent extends Component {
+                state = {
+                  first: 'loading...',
+                  second: 'loading...',
+                  third: 'loading...',
+                  fourth: 'loading...',
+                  doneMessage: 'finished!'
+                };
+
+                render () {
+                   const { state } = this;
+
+                   return (
+                     <ul>
+                       {Object.keys(state)
+                         .filter(key => key !== 'doneMessage')
+                         .map(key => )
+                           <li key={key}>
+                              <strong>{key}: </strong>
+                              {state[key]}
+                           </li>
+                        ))}
+                     </ul>
+                  );
+               }
+            }
+_______________________________________________________________________________
+
+* This component renders the 'keys' and 'values' of its state--except for 'doneMessage'.
+* Each value defaults to loading.... To iterate over objects, we have to use 'Object.keys()', 
+  which returns an array of the object keys. 
+* Next, 'filter()' is used to return a new array of object keys but 
+  without the 'doneMessage' value.
+* Finally, we can call 'map()' to map each object key to an <li> element.
+* The value that corresponds to the key is looked up on the state pbject, like so : 'state[key]'.
+
+* Lets write code that sets the state of each state property individually :
+_______________________________________________________________________________________________________
+
+           import React from 'react';
+           import { render } from 'react-dom';
+           import MyComponent from './MyComponent';
+ 
+           const myComponent = render(<MyComponent />,
+           document.getElementById('root'));
+
+           setTimeout (() => {
+             myComponent.setState({ first: 'done!' });
+           }, 1000);
+
+           setTimeout (() => {
+             myComponent.setState({ second: 'done!' });
+           }, 2000);
+  
+           setTimeout (() => {
+             myComponent.setState({ third: 'done!' });
+           }, 3000);
+
+           setTimeout (() => {
+             myComponent.setState(state => ({
+               ....state,
+               fourth: state.doneMessage
+             }));
+           }, 4000);
+
+__________________________________________________________________________________________________
+
+* The takeaway from this example is that you can set individual state properties on components.
+* It will efficiently re-render itself.
+
+* Here's what the rendered output looks like for the "initial component state" :
+
+                                          ______________________
+                                         |                      |
+                                         | * first: loading...  |
+                                         | * second: loading... |
+                                         | * third: loading...  |
+                                         | * fourth: loading... |
+                                         |______________________|
+
+* Here's what the Output looks like after three of the "setTimeout()" callbacks have run :
+                                          ______________________
+                                         |                      |
+                                         | * first: done!       |
+                                         | * second: done!      |
+                                         | * third: done!       |
+                                         | * fourth: finished!  |
+                                         |______________________|
+
+* The fourth call to 'setState()' looks different from the first three.
+* Instead of passing a new object to merge into the existing state,
+  you can pass a function.
+* This function takes a state argument--the current state of the component.
+* Useful when you need to base state changes on current state values.
+* In this example, the 'doneMessage' value is used to set the value of 'fourth'.
+* The function then 'returns' the "new state" of the component.
+* It's up to you merge existing state values into the new state.
+* You can use the "spread operator" to do this (...state).
+
+* Components with state usually have an intial state.
+* You can then change the initial values by calling "setState()".
+* If you only need to change part of the state, you can pass an object with only
+  the values that you want to change and React will take care of merging the values 
+  into the overall state of the component.
+* Now we've looked at the state of a component that changes over time, it's time to
+  learn about 'properties' that never change.
+
+        //// Passing Property Values \\\\
+
+* Properties are like "state data" that gets passed into "components".
+* however, 'properties' are different from state in that they're only set once, 
+  which is when the component is rendered.
+* Here we'll learn about default property values.
+* Then, we'll look at setting property values.
+
+* The goal here should teach you about the different between 'component state' and 'properties'. 
+
+        /// Default Property Values \\\
+** Default property values work a little differently than default state values.
+* They're set as a class attribute called 'defaultProps'.
+
+** Let's take a look at a component that declares default property values :
+________________________________________________________________________________________________________
+
+            import React, { Component } from 'react';
+
+            export default class MyButton extends Component {
+              static defaultProps = {
+                 disabled: false,
+                 text: 'My Button'
+              };
+
+             render() {
+               const { disabled. text } = this.props;
+
+               return <button disabled={disabled}>(text)</button>;
+             }
+           }
+____________________________________________________________________________________________________________________
+
+* Why not just set the default property values as an instance property, like
+  you would with default state?
+* That's because 'properties' are immutable, and there's no need for them to be kept as
+  an instance property value.
+* State on the other hand changes all the time, so the component needs an instance reference to it.
+
+* You can see that this component sets default property values for 'disabled' and 'text'.
+* These values are only used if they're not passed in through the JSX markup used to render the componenent. 
+
+* Now we will render this component without any properties, to make sure that the "defaultprops" values are used : 
+______________________________________________________________________________________________________________________ 
+   
+    import React from 'react';
+    import { render } from 'react-dom';
+    import MyButton from './MyButton';
+
+    render(<MyButton />, document.getElementById('root'));
+____________________________________________________________________________________________________________
+
+* The same principle of always having default state applies to properties too.
+* Here the MyButton component renders a <button> element using the
+  default 'disabled' and 'text' property values.
+
+* Let us write code that will pass new property values to components that will override
+  any defualt value for a given property.
+
+                /// Setting Property Values \\\
+
+* React component properties are set by passing JSX attributes to the component when it is rendered.
+* Let us create a couple of componenents that expect different types of property values.
+____________________________________________________________________________________________________
+        
+               import React, { Component } from 'react';
+
+               export default class MyButton extends Component {
+                 render() {
+                   const { disabled, text } = this.props;
+
+                   return <button disabled={disabled}>{text}</button>;
+                 }
+               }
+___________________________________________________________________________________________________
+* This button component expects a Boolean 'disabled' property and a string text property.
+* Create one more component that expects an array property value :
+___________________________________________________________
+  
+            import React, { Component } from 'react';
+            
+            export default class MyList extends Component {
+              render() {
+                const { items } = this.props;
+                
+                return (
+                  <ul>
+                   {items.map(i => (
+                      <li key={i}>{i}</li>
+                    ))}
+                  </ul>
+                );
+             }
+           }
+__________________________________________________________________________
+
+* You can pass just about anything you want as a property value via JSX, just as long
+  as its a valid JavaScript expression.
+* The MyList component accepts an items property, an array that is mapped to <li> elements.
+  Now, let's write code to set these property values :
+______________________________________________________________________________________________
+
+               import React from 'react';
+               import { render as renderJSX } from 'react-dom';
+               import MyButton from './MyButton';
+               import MyList from './MyList';
+               
+               const appState = {
+                 text: 'My Button',
+   
+               disabled: true,
+               items: ['First', 'Second', 'Third']
+             };
+           
+             function render(props) {
+               renderJSX(
+                 <main>
+                   <MyButton text={props.text} disabled={props.disabled} />
+                   <MyList items={props.items} />
+                 </main>,
+                 document.getElementById('root')
+              );
+            }
+            render(appState);
+
+            setTimeout(() => {
+              appState.disabled = false;
+              appState.items.push('Fourth');
+        
+              render(appState);
+            }, 1000);
+_____________________________________________________________________________________________________     
+  
+ * The 'render ()' function looks like it's creating new React component instances every time its called.
+ * React is smart enough to figure that these components already exist, and that it
+   only needs to figure out what the difference in output will be with the new property values.
+* In this example, the call to 'setTimeout ()' causes a delay of 1 second.
+* Then the 'appState.disabled' value is changed to 'false' and 
+  the 'appState.items' array has a new value added to the end of it.
+* The call to "render ()" will re-render the <MyButton> and <MyList> components 
+  with new property values.
+
+* The "appState" object holds on to the state of the application.
+* Pieces of this 'state' are then passed into components as 'properties' when
+  the components are rendered.
+* 'State' has to live somewhere, in this case it is outside of the component.
+
+* We will now learn how to build ''stateless functional components''.
+
+          /// Stateless Components \\\
+
+* The 'components' we've done so far have been classes that extend the 'base' component class.
+* Now we will know about functional components in React.
+* We'll implement a functional component.
+* Next, we will know how to set default property values for 'stateless functional components'.
+
+              || Pure Functional Components ||
+
+* A functional React component---is just a "function".
+* Remember the render() method of any React component.
+* This method in essence is the component.
+
+* The Job of a "functional React component" is to return JSX, just like a class-based React component.
+* "Functional Component" >>> It has no 'state' and no 'lifecycle methods'.
+
+* WHY then use 'functional components' ?
+** Because of its simplicity.
+
+* If your component renders some JSX and does nothing else, then why bother
+  with a class when a function is simpler ?
+
+* A pure function is a function without side effects.
+* HOW ?, its called with a given set of arguments, the function always
+  produces the same output.
+* WHY ?, This is relevant for React components because, given a set of properties, it's easier to 
+  predict what the rendered content will be.
+* "Functions" that always return the same value with a given argument values are easier to test as well.
+
+ >>>> REASONS TO use Functional React Component :
+      * Simple
+      * Easier to predict what the rendered content will be
+      * It always returns the same value with given argument values.
+      * Because of all this its easier to "Test" as well.
+
+* >>> Functional Component Now :
+__________________________________________________________________
+
+           import React from 'react';
+
+           export default ({ disabled, text }) => ( 
+             <button disabled={disabled}>{text}</button>
+           );
+____________________________________________________________
+
+* Concise.
+* This function returns a <button> element, using the properties passed in as
+  arguments (instead of accessing them through 'this.props').
+* This function is pure because the same content is rendered if the
+  same 'disabled' and 'text' property values are passed. 
+* Now, lets see how to render this component :
+_________________________________________________________________________________________
+
+         import React from 'react';
+         import { render as renderJSX } from 'react-dom';
+         import MyButton from './MyButton';
+
+         functional render ({ first, second }) {
+            renderJSX(
+              <main>
+                 <MyButton text={first.text} disabled={first.disabled} />
+                 <MyButton text={second.text} disabled={second.disabled} />
+              </main>,
+              document.getElementById('root')
+            );
+         }
+
+        render({
+          first: {
+            text: 'First Button',
+            disabled: false
+          },
+         second: {
+           text: 'Second Button',
+           disabled: true
+         }
+       });
+_____________________________________________________________________________________________
+
+ * There's zero difference between the class-based and function-based React Components, 
+   from a JSX point of view.
+ * The JSX looks exactly the same whether the component was declared using the 
+   class or function syntax.
+
+!!!!!**// The convention is to use the 'arrow' function syntax to declare functional React components.
+!!!!!**// However, it's perfectly valid to declare them using a traditional JavaScript function syntax 
+          if its suited for you.
+
+* Heres how the rendered HTML output looks :
+                                              ________________________________
+                                             |                                | 
+                                             |   First Button | Second Button |
+                                             |________________________________|
+
+* "Functional components" rely on property values being passed to them for anything dynamic. 
+* Example, if a component renders a functional component it usually passes in 'property values' and 
+  these can change each time it is rendered.
+
+* But what about default 'property values' for functional components ? 
+
+              || Default in Functional Components ||
+
+* "Functional Components" are lightweight; they don't have any 'state' or 'lifecycle'.
+* They do, however, support some metadata options.
+* For Example : You can specify the default property values of 'functional components' the 
+  same way you would with a class component.
+* Here's the example of this :
+___________________________________________________________________________________
+
+                import React from 'react';
+  
+                const MyButton = ({ disabled, text }) => (
+                    <button disabled={disabled}>{text}</button>
+                );
+
+                MyButton.defaultProps = {
+                  text: 'My Button',
+                  disabled: false
+                };
+
+                export default MyButton;
+____________________________________________________________________________________
+
+* The 'defaultProps' property is defined on a function instead of a 'class'.
+* When React encounters a 'functional component' with this property, it knows to
+  pass in the default properties if they're not provided via JSX.
+
+* Functional components are an important part of React applications because they're 
+  highly focused on taking property values and rendering markup that uses these values.
+* The term "pure function" is used to indicate that a function, in our case, a React component, 
+  does'nt have any side effects.
+* As long as you give it the same property values, just as their 'class-based' counterparts can.
+
+* A pattern you might have noticed : * Some components have state that changes over time.
+                                     * These components then pass state values to other components as properties.            
+                                     * These stateful components are called container components.
+
+
+                    /// Container Components \\\
+
+//**// Here, we'll learn about the concept of 'container components'.
+//**// This is a React pattern, and it brings together many of the concepts
+       that you've learned about "state" and "properties".
+
+* The basic premise of container components is simple : DO NOT, mix "data fetching" with the
+  component that 'renders' the data.
+* The container is responsible for fetching the data and passing it to its child component.
+* The container contains the component responsible for rendering the data.
+
+* The idea is that you should be able to achieve some level of substitutability with this pattern.
+* For example, a container could substitute its child component.
+  OR, a child component could be used in a differenct container.
+* Let's look at the container pattern in action, starting with the container itself :
+__________________________________________________________________________________________________
+
+        import React, { Component } from 'React';
+        import MyList from './MyList';
+
+        function fetchData () {
+            return new Promise (resolve => {
+               setTimeout(() => {
+                  resolve(['First', 'Second', 'Third']);
+               }, 2000);
+            });
+        }
+        
+        export default class MyContainer extends Component {
+          state = { items: [] };
+
+          componentDidMount () {
+             fetchData().then(items => this.setState({ items }));
+          }
+          
+          render () {
+            return <MyList {...this.state} />;
+          }
+       }
+_____________________________________________________________________________________________
+
+* The job of this component is to 'fetch data' and set its "state".
+* Any time the state is set, 'render ()' is called.
+* This is where the child component comes in. 
+* The state of the container is passed to the 'MyList' component as properties.
+
+* Look at the 'MyList' component next :
+_______________________________________________________________________
+
+                      import React from 'react'; 
+                      
+                      export default ({ items }) => (
+                         <ul>
+                           {items.map(i => (  
+                              <li key={i}>{i}</li>
+                           ))}
+                     );
+_______________________________________________________________
+
+* MyList is a functional component that expects an "items" property.
+* Let's see how the container component is actually used :
+___________________________________________________________________
+
+                     import React from 'react';
+                     import { render } from 'react-dom';
+                     import MyContainer from './MyContainer';
+
+                     render(<MyContainer />, document.getElementById('root'));
+________________________________________________________________________________
+
+* Container component design will be covered in more depth in chapter6,
+  "crafting Reusable Components".
+* The idea of this example is to give you a feel for the interplay between state and properties
+  in React components.
+* When you load the page, you'll see the following content rendered after the 3 seconds 
+  it takes to simulate an HTTP request: 
+                                                     __________
+                                                    |          |
+                                                    | * First  |
+                                                    | * Second |
+                                                    | * Third  |
+                                                    |__________| 
+* "Containers" are an important concept in React applications.
+* "Containers" help to seperate the work of "getting data" and "using data" to render markup.
+* You'll encounter the variations of this pattern in React base applications.
+* The container does the work to get the data, and then pass it as properties to the
+  component responsible for rendering visual elements.
+
+* After time, you may have alot of container components in your application that
+  all share similar state that needs to be passed to 'child components'.
+* This equals lots of code to pass property values around.
+
+* To Access data thatis global in your application, we will use "context".
+
+          || Providing And Consuming Context ||
+
+* As your Raect application grows, it will use more components.
+* Not only that, BUT the structure of your application will change so
+  that the components are nested more deeply.
+* The components nested deeply still need to have data passed to them.
+* Its not a big deal to pass data from a 'parent component' to a 'child component'.
+* The challenge is when you have to use components as indirection for passing data. around your app.
+
+* For any data that needs to make its way to any component in your App, you can create and use a 'context'.
+           //* Data >>> Any Component >>> You must create and use "conext".
+
+* Two key Concepts when using 'contexts' in React : "Providers" and "Consumers".
+     * A "Context Provider" creates data and makes sure its available to any React components.
+     * A "Context Consumers" is a component that uses this data within the context.
+
+* You might wonder if whether or not context is just a way of saying 'global data' in a React application. 
+* Essentially this is what contexts are about and used for.
+* Using the React approach to wrap components with a context works better than creating 
+  'global data' because you have better control of how your data flows down through the components.
+
+*//* Lets say you have an application data that determines permissions for given application features.
+*//* This data could be fetched from an API or it could be hardcoded.
+*//* Either way, you don't want to pass all of this permission data through the component tree.
+* It would be nice if the permission data were just there, for any component that needs it.
+* Starting at the very top of the component tree, lets look at the index.js :
+________________________________________________________________________________________
+  
+   import React from 'react';
+   import { render } from 'react-dom';
+   import { PermissionProvider } from './PermissionContext';
+   import App from './App';
+  
+   render(
+      <PermissionProvider>
+         <App />
+      </PermissionProvider>
+      document.getElementById('root')
+   );
+__________________________________________________________________________
+
+* The <App> component is the child of the <PermissionProvider> component.
+* This means that the permission context has been provided to the <App> component and any
+  of its children, all the way down the tree.
+* Lets take a look at 'PermissionContext.js' module where 
+  the permission context is defined :
+_____________________________________________________________________________________
+
+      import React, { Component, createContext } from 'react';
+
+      const { Provider, Consumer } = createContext('permissions');
+
+      export class PermissionProvider extends Component {
+        state = {
+          first: true,
+          second: false,
+          third: true
+        };
+
+       render() {
+          return (
+             <Provider value={this.state}>{this.props.children}</Provider>
+          );
+       }
+     }
+
+     const PermissionConsumer = ({ name, children }) => (
+        <Consumer>{value => value[name] && children}</Consumer>
+     );
+
+     export { PermissionConsumer };
+__________________________________________________________________________________________
+
+* The createContext() function is used to create the actual context.
+* The return value is an object containing two components—"Provider" and "Consumer".
+* Next, there's a simple abstraction for the permision provider thats to be used 
+  thoughout the whole app.
+*The State contains the actual data that components might want to use.
+* In this Example, if the value is true the feature should be displayed as normal.
+* If 'false' then the feature does'nt have permission to render.
+* Here the state is set only once.
+* The value thats rendered is the <Provider> component.
+* This provides any children with context data, set via the value property.
+
+* Next, theres a small abstraction for permission consumers.
+* Instead of having every component that needs to test for permissions implement 
+  the same logic over and over, the PermissionConsumer component can do it.
+* The child of the <Consumer> component is always a function  that takes the context data as an argument.  
+* In this example, the PermissionConsumer component has a name property, for the name of the feature.
+* This is compared with the value from the context and, if it's false, nothing is rendered.
+
+* Lets look at the APP component :
+__________________________________________________________________________________________________
+
+          import React, { Fragment } from 'react';
+          import First from './First';
+          import Second from './Second';
+          import Third from './Third';
+         
+          export default () => (
+             <Fragment>
+               <First />
+               <Second />
+               <Third />
+             </Fragment>
+          );
+_______________________________________________________________________________________________
+
+* This component renders three components that are features and each 
+  needs to check for permissions.
+* Without the context functionality of React, you would have to pass this data as a 
+  series of properties to each of these components through this componenet.
+* If <First> had children or grandchildren that needed to check permissions, the same
+  property-passing mechanism can get quite messy.
+
+* Now, lets take a look at the <First> component(<Second> and <Third> 
+  components are almost exactly the same) : 
+____________________________________________________________________________________________________
+
+         import React from 'react';
+         import { PermissionConsumer } from './PermissionContext';
+ 
+         export default () => (
+           <PermissionConsumer name="first">
+              <div> 
+                <button>First</button>
+              </div>
+           </PermissionConsumer>
+        );
+_______________________________________________________________________________________
+
+* This is where the 'PermissionConsumer' component is put to use.
+* You just need to supply it with a name property.
+* And the child compopnent is the component tht rendered if the
+ permission check passes.
+* The <PermissionConsumer> component can be used anywhere, and there's 
+  no need to pass data in order to use it.
+
+* Heres what the rendered output looks :  
+                                             _____________
+                                            |             |   
+                                            |  	First     |  
+                                            |   ------    |
+                                            |   Third     |
+                                            |_____________|
+
+* The second component isn't rendered because its permission in
+  the 'PermissionProvider' is set to 'false'.
+* Context should be used sparingly, because it can lead to confusion about where
+  data comes from and which components throughout your application rely on it.
+* Often, you'll start out using state to manage data and then, later on only to
+  discover that you're passing this state to every component in your app.
+* To avoid this, you can refactor data thats shared by every component from state into context.
+* Rememberthat context should be used sparingly.
+* If you rely on context for accessing data too much, it's a good indication that your app
+  has too much global data and should be revised.
+* For the data that must be global, context is a good way to avoid too much property-passing code. 
+
+               // Summary \\
+* In this chapter, you learned about "state" and "properties" in "React Components".
+* We defined and compared the two concepts.
+* We then implemented several React components and manipulated their "state", which allows
+  you to dynamically change and update what the user sees on screen.
+* Next, we learned about 'properties' by implementing code that passed property values from JSX to 
+  the component, in cases where the component only needs to display values instead of changing them.
+* Next, we learnt about the concept of a 'container component', which is used to decouple 
+  data fetching from rendering content, leading to a clear seperation of concerns.
+* Finally, we learnt about the new "context API" in React 16 and how to use it to avoid
+  too many repetitive properties when you have global application data.
+
+*/*/* Next chapter, we will learn about the new React Hooks API and how it supports
+      using functional components for everything, including state and lifecycle management.
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+   
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+                                                           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
